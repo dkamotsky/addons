@@ -170,7 +170,6 @@ class DiscriminativeLayerOptimizer(tf.keras.optimizers.Optimizer):
         self,
         base_optimizer: tf.keras.optimizers.Optimizer.__class__,
         model: tf.keras.Model,
-        learning_rate: float,
         verbose: bool = True,
         name: str = "discrim_opt",
         *args,
@@ -244,12 +243,11 @@ class DiscriminativeLayerOptimizer(tf.keras.optimizers.Optimizer):
             """
             )
 
-        super().__init__(lr=learning_rate, name=name, *args, **kwargs)
+        super().__init__(name=name, *args, **kwargs)
 
         DiscriminativeModelManager._prepare_model(model, verbose=verbose)
 
         self.opt_class = base_optimizer
-        self.learning_rate = learning_rate
         self.kwargs = kwargs
 
         # Find unique lr_mult.
@@ -263,7 +261,7 @@ class DiscriminativeLayerOptimizer(tf.keras.optimizers.Optimizer):
         self.optimizer_group = []
 
         for lr_mult in unique_lr_mults:
-            opt = self.opt_class(learning_rate=learning_rate * lr_mult, **kwargs)
+            opt = self.opt_class(learning_rate=lambda: self.lr * lr_mult, **kwargs)
             opt.lr_mult = lr_mult
             self.optimizer_group.append(opt)
 
