@@ -243,7 +243,10 @@ class DiscriminativeLayerOptimizer(tf.keras.optimizers.Optimizer):
             """
             )
 
-        super().__init__(name=name, *args, **kwargs)
+        def not_implemented_lr():
+            raise NotImplementedError("DiscriminativeLayerOptimizer doesn't have default learning rate.")
+
+        super().__init__(name=name, lr=not_implemented_lr, *args, **kwargs)
 
         DiscriminativeModelManager._prepare_model(model, verbose=verbose)
 
